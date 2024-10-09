@@ -45,13 +45,10 @@ app.post("/listings", async (req, res) => {
             images: req.body.images,
             name: req.body.name,
             phone_number: req.body.phone_number,
-            user_id: req.body.user_id,
         };
 
-        console.log("Data being inserted:", data); // Log the data object
-
         const query =
-            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id";
+            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id";
         const params = [
             data.sell_or_rent,
             data.brand,
@@ -61,10 +58,7 @@ app.post("/listings", async (req, res) => {
             data.images,
             data.name,
             data.phone_number,
-            data.user_id
         ];
-
-        console.log('Executing query:', query, params); // Log the full query and parameters
 
         const result = await client.query(query, params);
         data.id = result.rows[0].id; // assign the last inserted id to data object
@@ -85,11 +79,10 @@ app.post("/listings", async (req, res) => {
 
 //add get for display
 app.get("/listings", async (req, res) => {
-    const userId = req.params.id
     const client = await pool.connect();
     try {
-        const query = "SELECT * FROM listings WHERE user_id = $1";
-        const result = await client.query(query, [userId]);
+        const query = "SELECT * FROM listings";
+        const result = await client.query(query);
         res.json(result.rows);
     } catch (err) {
         console.log(err.stack);
@@ -160,3 +153,4 @@ app.use((req, res) => {
 app.listen(3000, () => {
     console.log("App is listening on port 3000");
 });
+
