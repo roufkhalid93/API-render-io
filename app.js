@@ -48,6 +48,8 @@ app.post("/listings", async (req, res) => {
             user_id: req.body.user_id,
         };
 
+        console.log("Data being inserted:", data); // Log the data object
+
         const query =
             "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id";
         const params = [
@@ -61,6 +63,8 @@ app.post("/listings", async (req, res) => {
             data.phone_number,
             data.user_id
         ];
+
+        console.log('Executing query:', query, params); // Log the full query and parameters
 
         const result = await client.query(query, params);
         data.id = result.rows[0].id; // assign the last inserted id to data object
