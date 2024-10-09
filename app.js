@@ -45,10 +45,11 @@ app.post("/listings", async (req, res) => {
             images: req.body.images,
             name: req.body.name,
             phone_number: req.body.phone_number,
+            user_id: req.body.user_id,
         };
 
         const query =
-            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id";
+            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id";
         const params = [
             data.sell_or_rent,
             data.brand,
@@ -58,6 +59,7 @@ app.post("/listings", async (req, res) => {
             data.images,
             data.name,
             data.phone_number,
+            data.user_id
         ];
 
         const result = await client.query(query, params);
@@ -79,10 +81,11 @@ app.post("/listings", async (req, res) => {
 
 //add get for display
 app.get("/listings", async (req, res) => {
+    const userId = req.params.id
     const client = await pool.connect();
     try {
-        const query = "SELECT * FROM listings";
-        const result = await client.query(query);
+        const query = "SELECT * FROM listings WHERE user_id = $1";
+        const result = await client.query(query, [userId]);
         res.json(result.rows);
     } catch (err) {
         console.log(err.stack);
