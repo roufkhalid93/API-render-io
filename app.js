@@ -33,9 +33,56 @@ getPostgresVersion();
 
 //CRUD operation
 //add post
+// app.post("/listings", async (req, res) => {
+//     const client = await pool.connect();
+//     try {
+//         const data = {
+//             sell_or_rent: req.body.sell_or_rent,
+//             brand: req.body.brand,
+//             model: req.body.model,
+//             year: req.body.year,
+//             transmission: req.body.transmission,
+//             images: req.body.images,
+//             name: req.body.name,
+//             phone_number: req.body.phone_number,
+//         };
+
+//         const query =
+//             "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id";
+//         const params = [
+//             data.sell_or_rent,
+//             data.brand,
+//             data.model,
+//             data.year,
+//             data.transmission,
+//             data.images,
+//             data.name,
+//             data.phone_number,
+//         ];
+
+//         const result = await client.query(query, params);
+//         data.id = result.rows[0].id; // assign the last inserted id to data object
+
+//         console.log('Post created successfully with id ${data.id}');
+//         res.json({
+//             status: "success",
+//             data: data,
+//             message: "Post created successfully",
+//         });
+//     } catch (error) {
+//         console.error("Error: ", error.message);
+//         res.status(500).json({ error: error.message });
+//     } finally {
+//         client.release();
+//     }
+// });
+
+
+//add post new code
 app.post("/listings", async (req, res) => {
     const client = await pool.connect();
     try {
+        // Extracting data from the request body, including user_id
         const data = {
             sell_or_rent: req.body.sell_or_rent,
             brand: req.body.brand,
@@ -45,10 +92,12 @@ app.post("/listings", async (req, res) => {
             images: req.body.images,
             name: req.body.name,
             phone_number: req.body.phone_number,
+            user_id: req.body.user_id, // New field for user_id
         };
 
+        // Update the SQL query to include user_id
         const query =
-            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id";
+            "INSERT INTO listings(sell_or_rent, brand, model, year, transmission, images, name, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id";
         const params = [
             data.sell_or_rent,
             data.brand,
@@ -58,12 +107,14 @@ app.post("/listings", async (req, res) => {
             data.images,
             data.name,
             data.phone_number,
+            data.user_id, // Add user_id to the parameters
         ];
 
+        // Execute the query
         const result = await client.query(query, params);
         data.id = result.rows[0].id; // assign the last inserted id to data object
 
-        console.log('Post created successfully with id ${data.id}');
+        console.log(`Post created successfully with id ${data.id}`);
         res.json({
             status: "success",
             data: data,
@@ -76,6 +127,7 @@ app.post("/listings", async (req, res) => {
         client.release();
     }
 });
+
 
 //add get for display
 app.get("/listings", async (req, res) => {
