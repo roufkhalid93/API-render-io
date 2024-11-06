@@ -1,5 +1,5 @@
 let express = require("express");
-let path = require("path");
+// let path = require("path");
 
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -194,15 +194,22 @@ app.delete("/listings/:id", async (req, res) => {
 
 //endpoint end
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname + "/index.html"));
-});
+// app.get("/", (req, res) => {
+//     res.sendFile(path.join(__dirname + "/index.html"));
+// });
 
-app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname + "/404.html"));
+// app.use((req, res) => {
+//     res.status(404).sendFile(path.join(__dirname + "/404.html"));
+// });
+
+// app.listen(3000, () => {
+//     console.log("App is listening on port 3000");
+// });
+
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "Welcome to the carANTel API!" });
 });
 
 app.listen(3000, () => {
     console.log("App is listening on port 3000");
 });
-
