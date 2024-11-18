@@ -1,5 +1,4 @@
 let express = require("express");
-// let path = require("path");
 
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -130,15 +129,21 @@ app.post("/listings", async (req, res) => {
 
 
 //add get for display
-app.get("/listings", async (req, res) => {
+app.get("/listings/user/:userId", async (req, res) => {
     const client = await pool.connect();
+    const { userId } = req.params; // Extract userId from the request URL
+
     try {
-        const query = "SELECT * FROM listings";
-        const result = await client.query(query);
+        // Query to fetch listings for the specific user
+        const query = "SELECT * FROM listings WHERE user_id = $1";
+        const values = [userId];
+        const result = await client.query(query, values);
+
+        // Send the filtered listings as a response
         res.json(result.rows);
     } catch (err) {
         console.log(err.stack);
-        res.status(500).send("An error occured");
+        res.status(500).send("An error occurred");
     } finally {
         client.release();
     }
@@ -192,19 +197,6 @@ app.delete("/listings/:id", async (req, res) => {
     }
 });
 
-//endpoint end
-
-// app.get("/", (req, res) => {
-//     res.sendFile(path.join(__dirname + "/index.html"));
-// });
-
-// app.use((req, res) => {
-//     res.status(404).sendFile(path.join(__dirname + "/404.html"));
-// });
-
-// app.listen(3000, () => {
-//     console.log("App is listening on port 3000");
-// });
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Welcome to the carANTel API!" });
